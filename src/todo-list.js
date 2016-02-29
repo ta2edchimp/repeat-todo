@@ -1,19 +1,27 @@
 import React from 'react'
+import {Motion, spring} from 'react-motion';
 import ReactDOM from 'react-dom'
+
+const ITEM_HEIGHT = 80;//TODO: find a way without hardcoded height
 
 export default TodoList
 
 function TodoList({todos, onComplete, onDelete}) {
   return (
-    <ol>
+    <ol className="todo-list">
       {todos.map(
         (todo, index) => {
-          return <Todo
-            key={index}
-            todo={todo}
-            onComplete={() => onComplete(index)}
-            onDelete={() => onDelete(index)}
-          />
+          return <Motion
+            key={todo}
+            style={{top: spring(index*ITEM_HEIGHT)}}>
+              {val =>
+                <Todo
+                  style={{...val, position: 'absolute'}}
+                  todo={todo}
+                  onComplete={() => onComplete(index)}
+                  onDelete={() => onDelete(index)}
+                  />
+          }</Motion>
         })
       }
     </ol>
@@ -21,12 +29,13 @@ function TodoList({todos, onComplete, onDelete}) {
 }
 
 function Todo({
+  style,
   todo,
   onComplete,
   onDelete,
 }) {
   return (
-    <li>
+    <li style={style}>
       <strong>{todo}</strong>
       <br />
       <button

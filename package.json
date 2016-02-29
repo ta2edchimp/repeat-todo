@@ -25,5 +25,8 @@
     "quik": "0.4.3",
     "rimraf": "2.5.2",
     "surge": "0.17.7"
+  },
+  "dependencies": {
+    "react-motion": "^0.4.2"
   }
 }
