@@ -16,7 +16,7 @@ function TodoList({todos, onComplete, onDelete}) {
             style={{top: spring(index*ITEM_HEIGHT)}}>
               {val =>
                 <Todo
-                  style={{...val, position: 'absolute'}}
+                  style={{...val}}
                   todo={todo}
                   onComplete={() => onComplete(index)}
                   onDelete={() => onDelete(index)}
@@ -35,7 +35,7 @@ function Todo({
   onDelete,
 }) {
   return (
-    <li style={style}>
+    <li style={style} className="todo-item">
       <strong>{todo}</strong>
       <br />
       <button
