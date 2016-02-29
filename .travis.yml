@@ -7,5 +7,7 @@ branches:
     - master
 node_js:
   - "4"
+before_install:
+  - npm i -g npm@^3.0.0
 script:
   - time npm run deploy
