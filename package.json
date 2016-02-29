@@ -5,12 +5,13 @@
   "description": "A simple app for repeating Todos",
   "main": "index.js",
   "scripts": {
-    "prebuild": "rm -rf dist/ && mkdir dist/",
+    "clean": "rimraf dist/",
     "build": "quik --html index.html --output dist/index.html --production",
-    "copy": "cpy favicon.png dist/",
+    "copy": "cpy favicon.png service-worker.js dist/",
     "start": "quik",
-    "predeploy": "npm-run-all --parallel build copy",
+    "predeploy": "npm-run-all clean --parallel build copy",
     "deploy": "surge --project ./dist --domain https://repeat-todo.surge.sh",
+    "serve:dist": "http-server dist",
     "user-for-deploy": "echo kent+repeat-todo@doddsfamily.us",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,6 +20,7 @@
   "license": "MIT",
   "devDependencies": {
     "cpy-cli": "1.0.0",
+    "http-server": "0.9.0",
     "npm-run-all": "1.5.1",
     "quik": "0.4.3",
     "rimraf": "2.5.2",
