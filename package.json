@@ -1,0 +1,22 @@
+{
+  "name": "repeat-todo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A simple app for repeating Todos",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "rm -rf dist/ && mkdir dist/",
+    "build": "quik --html index.html --output dist/index.html --production",
+    "start": "quik",
+    "deploy": "surge --project ./dist --domain repeat-todo.surge.sh",
+    "user-for-deploy": "echo kent+repeat-todo@doddsfamily.us",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Kent C. Dodds <kent@doddsfamily.us> (http://kentcdodds.com/)",
+  "license": "MIT",
+  "devDependencies": {
+    "quik": "0.4.3",
+    "surge": "0.17.7"
+  }
+}
