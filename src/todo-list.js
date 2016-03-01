@@ -12,12 +12,12 @@ function TodoList({todos, onComplete, onDelete}) {
       {todos.map(
         (todo, index) => {
           return <Motion
-            key={todo}
+            key={todo.id}
             style={{top: spring(index*ITEM_HEIGHT)}}>
               {val =>
                 <Todo
                   style={{...val}}
-                  todo={todo}
+                  todo={todo.value}
                   onComplete={() => onComplete(index)}
                   onDelete={() => onDelete(index)}
                   />
