@@ -5,26 +5,34 @@ export default React.createClass({
   propTypes: {
     onAdd: React.PropTypes.func,
   },
-  render() {
-    return (
-      <div style={{display: 'flex'}}>
-        <input
-          type="text"
-          ref="input"
-          style={{flex: 1}}
-        />
-        <button onClick={this._onAddClick}>
-          Add
-        </button>
-      </div>
-    )
-  },
-  _onAddClick() {
-    const input = this.refs.input
-    if (input.value) {
-      this.props.onAdd(input.value)
-      input.value = ''
+  getInitialState: function() {
+    return {
+      todoInput: ''
     }
   },
+  render() {
+    return (
+      <form onSubmit={this._onAddSubmit} style={{display: 'flex'}}>
+        <input
+          type="text"
+          value={this.state.todoInput}
+					onChange={this._onTodoInputChange}
+          style={{flex: 1}}
+        />
+        <button type="submit">
+          Add
+        </button>
+      </form>
+    )
+  },
+  _onAddSubmit(event) {
+    event.preventDefault()
+    if (this.state.todoInput) {
+      this.props.onAdd(this.state.todoInput)
+      this.setState({todoInput: ''})
+    }
+  },
+  _onTodoInputChange(event) {
+    this.setState({todoInput: event.target.value})
+  },
 })
-
