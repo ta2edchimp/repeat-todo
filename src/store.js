@@ -21,17 +21,11 @@ class Store {
     }
 
     applyMigrations(migrations) {
-        const initialData = this.get();
-        const hasMigrationsToApply = migrations.some(m => m.isApplicable(initialData));
+        const migratedData = migrations.reduce((data, migration) => {
+            return migration.isApplicable(data) ? migration.apply(data) : data;
+        }, this.get());
 
-        if (hasMigrationsToApply) {
-            const migratedData = migrations.reduce((data, migration) => {
-                return migration.isApplicable(data) ? migration.apply(data) : data;
-            }, initialData);
-
-            this.set(migratedData);
-        }
-
+        this.set(migratedData);
     }
 }
 
