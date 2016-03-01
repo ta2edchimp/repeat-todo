@@ -1,8 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import uuid from 'an-uuid';
 import TodoList from './todo-list'
 import AddTodo from './add-todo'
 import {arrayMoveToEnd, arrayRemoveElement} from './utils'
+import Store from './store';
+import migrations from './migrations';
 
 const App = React.createClass({
   getInitialState() {
@@ -27,7 +30,8 @@ const App = React.createClass({
     )
   },
   _onAdd(val) {
-    const newList = [val, ...this.state.todoList]
+    const newItem = {id: uuid(), value: val};
+    const newList = [newItem, ...this.state.todoList];
     this._updateStoreAndState(newList)
   },
   _onComplete(currentIndex) {
@@ -43,18 +47,16 @@ const App = React.createClass({
     this._updateStateFromStore()
   },
   _updateStore(newList) {
-    const newListJson = JSON.stringify(newList)
-    this.props.store.setItem('todoList', newListJson)
+    this.props.store.set(newList);
   },
   _updateStateFromStore() {
-    const todoListJson = this.props.store.getItem('todoList') || '[]'
-    const todoList = JSON.parse(todoListJson)
+    const todoList = this.props.store.get() || [];
     this.setState({todoList})
   }
-})
+});
 
 ReactDOM.render(
-  <App store={window.localStorage} />,
-  document.getElementById('app'),
+  <App store={new Store('todoList', migrations)} />,
+  document.getElementById('app')
 )
 

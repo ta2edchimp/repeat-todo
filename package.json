@@ -27,6 +27,7 @@
     "surge": "0.17.7"
   },
   "dependencies": {
+    "an-uuid": "^1.0.0",
     "react-motion": "^0.4.2"
   }
 }
