@@ -9,7 +9,7 @@ polyfillCache();
 // version of the ServiceWorker for the first time.
 self.addEventListener('install', function onServiceWorkerInstall(event) {
   console.log('install event', event);
-  // We pass a promise to event.waitUntil to signal how 
+  // We pass a promise to event.waitUntil to signal how
   // long install takes, and if it failed
   event.waitUntil(
     // We open a cache…
@@ -32,13 +32,26 @@ self.addEventListener('fetch', function onServiceWorkerFetch(event) {
   // of providing the response. We pass in a promise
   // that resolves with a response object
   event.respondWith(
-    // First we look for something in the caches that
-    // matches the request
-    caches.match(event.request).then(function(response) {
-      // If we get something, we return it, otherwise
-      // it's null, and we'll pass the request to
-      // fetch, which will use the network.
-      return response || fetch(event.request);
+    caches.open('REPEAT_TODO').then(function(cache) {
+      // First we look for something in the caches that
+      // matches the request
+      return cache.match(event.request).then(function(response) {
+        // The fetchPromise will use the network (if available)
+        // and update the cache on success
+        // That means: the updated data will be available from
+        // cache the next time it's requested.
+        var fetchPromise = fetch(event.request).then(function(networkResponse) {
+          // cache.put(event.request, networkResponse.clone());
+          cache.add(event.request);
+          return networkResponse;
+        })
+        // In console, being unable to fetch because of ERR_CONNECTION_REFUSED etc will yield:
+        // "Uncaught (in promise) TypeError: Failed to fetch at TypeError (native)"
+
+        // If we get something, we return it, otherwise
+        // it's null, and we'll pass the fetchPromise
+        return response || fetchPromise;
+      })
     })
   );
 });
