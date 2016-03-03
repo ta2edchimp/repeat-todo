@@ -1,4 +1,5 @@
 // thanks Jake! https://github.com/jakearchibald/simple-serviceworker-tutorial/blob/gh-pages/sw.js
+var currentCache = 'REPEATE_TODO';
 
 // Chrome's currently missing some useful cache methods,
 // this polyfill adds them.
@@ -9,11 +10,11 @@ polyfillCache();
 // version of the ServiceWorker for the first time.
 self.addEventListener('install', function onServiceWorkerInstall(event) {
   console.log('install event', event);
-  // We pass a promise to event.waitUntil to signal how 
+  // We pass a promise to event.waitUntil to signal how
   // long install takes, and if it failed
   event.waitUntil(
     // We open a cache…
-    caches.open('REPEAT_TODO').then(function(cache) {
+    caches.open(currentCache).then(function(cache) {
       // And add resources to it
       return cache.addAll([
         './',
@@ -32,13 +33,21 @@ self.addEventListener('fetch', function onServiceWorkerFetch(event) {
   // of providing the response. We pass in a promise
   // that resolves with a response object
   event.respondWith(
-    // First we look for something in the caches that
-    // matches the request
-    caches.match(event.request).then(function(response) {
-      // If we get something, we return it, otherwise
-      // it's null, and we'll pass the request to
-      // fetch, which will use the network.
-      return response || fetch(event.request);
+    // First we look if we can get the (maybe updated)
+    // resource from the network
+    fetch(event.request).then(function (networkResponse) {
+      // On success, update the Cache and return the network response
+      console.log('fetch from network for ' + event.request.url + ' successfull, updating cache');
+      caches.open(currentCache).then(function (cache) {
+        return cache.add(event.request);
+      });
+      return networkResponse;
+    }).catch(function(reason) {
+      // On failure, look up in the Cache for the requested resource
+      console.log('fetch from network for ' + event.request.url + ' failed:', reason);
+      return caches.match(event.request).then(function (cachedResponse) {
+        return cachedResponse;
+      });
     })
   );
 });
